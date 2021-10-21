@@ -29,7 +29,7 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = true;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable (
             name="users_roles",
             joinColumns=
