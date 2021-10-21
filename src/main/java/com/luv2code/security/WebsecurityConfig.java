@@ -12,6 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+
 
 @Configuration
 @EnableWebSecurity
@@ -37,7 +40,16 @@ public class WebsecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/login")
                     .usernameParameter("email")
                     .passwordParameter("password")
-                    .permitAll();
+                    .permitAll()
+                .and()
+                    .logout()
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+                    .permitAll()
+                .and()
+                    .rememberMe()
+                    .key("AbcDefgKLDSLmvop_0123456789")
+                    .tokenValiditySeconds(7 * 24 * 60 * 60); // 7days
+
 
     }
 
