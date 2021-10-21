@@ -26,12 +26,17 @@
             <tbody>
                 <tr th:each="user : ${listUsers}">
                     <td>[[${user.id}]]</td>
-                    <td th:if="${user.photos != null}">[[${user.photos}]]</td>
-                    <td th:if="${user.photos == null}">Null</td>
+                    <td>
+                        <img th:if="${user.photos == null}" th:src="@{/images/default-user.png}" style="width: 100px"/>
+                        <img th:if="${user.photos != null}"
+                             th:src="@{'/images/user-photos/' + ${user.id} + '/' + ${user.photos}}"/>
+                    </td>
                     <td>[[${user.firstName}]]</td>
                     <td>[[${user.lastName}]]</td>
-                    <td th:if="${user.roles.size() > 0}">[[${user.roles}]]</td>
-                    <td th:if="${user.roles.size() == 0}">Null</td>
+                    <td>
+                        <span th:if="${user.roles.size() > 0}">[[${user.roles}]]</span>
+                        <span th:if="${user.roles.size() == 0}">Null</span>
+                    </td>
                     <td>
                         <a th:if="${user.enabled == true}" class="fas fa fa-check-circle fa-2x icon-green"
                             th:href="@{'/users/enabled/' + ${user.id} + '/false'}">
