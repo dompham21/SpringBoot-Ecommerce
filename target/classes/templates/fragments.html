@@ -13,3 +13,92 @@
     <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}" ></script>
 <!--    <script type="text/javascript" th:src="@{/js/common.js}" ></script>-->
 </head>
+<body>
+    <!-- COLUMN LINK -->
+    <th th:fragment="column_link(fieldName, columnLabel)">
+
+        <a class="text-white"
+           th:href="@{'/users/page/' + ${currentPage} + '?sortField=' + ${fieldName}  +'&sortDir=' + ${sortField != fieldName ? sortDir : reverseSortDir}}">
+            [[${columnLabel}]]
+        </a>
+        <span th:if="${sortField == fieldName}"
+              th:class="${sortDir == 'asc' ? 'fas fa-sort-up' : 'fas fa-sort-down'}" ></span>
+
+    </th>
+    <!-- COLUMN LINK END -->
+
+    <!-- PAGE LINK -->
+    <a th:fragment="page_link(pageNum, label)"
+       class="page-link"
+       th:href="@{'/users/page/' + ${pageNum} + '?sortField=' + ${sortField}  +'&sortDir='+  ${sortDir}}">
+        [[${label}]]
+       </a>
+    <!-- PAGE LINK END -->
+
+<!-- PAGINATION -->
+    <div th:fragment="pagination(entityName)">
+        <div class="text-center m-1" th:if="${totalItems > 0}">
+            <span>Showing [[${entityName}]] # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+        </div>
+        <div class="text-center m-1" th:unless="${totalItems > 0}">
+            <span>No [[${entityName}]] found</span>
+        </div>
+
+        <div th:if="${totalPages > 1}">
+            <nav>
+                <ul class="pagination justify-content-center flex-wrap">
+                    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                        <a th:replace="fragments :: page_link(1, 'First')"></a>
+                    </li>
+                    <li th:class="${currentPage > 1 ? 'page-item' : 'page-item disabled'}">
+                        <a th:replace="fragments :: page_link(${currentPage - 1}, 'Previous')"></a>
+                    </li>
+
+                    <li th:class="${currentPage != i ? 'page-item': 'page-item active'}"
+                        th:each="i : ${#numbers.sequence(1, totalPages)}">
+                        <a th:replace="fragments :: page_link(${i}, ${i})"></a>
+                    </li>
+
+                    <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                        <a th:replace="fragments :: page_link(${currentPage + 1}, 'Next')"></a>
+                    </li>
+
+                    <li th:class="${currentPage < totalPages ? 'page-item' : 'page-item disabled'}">
+                        <a th:replace="fragments :: page_link(${totalPages}, 'Last')"></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <!-- PAGINATION END-->
+
+
+    <!-- SEARCH FORM -->
+    <div th:fragment="search_form_and_message()">
+        <form th:action="@{'/users/page/1'}" class="form-inline m-3">
+            <input type="hidden" name="sortField" th:value="${sortField}" />
+            <input type="hidden" name="sortDir" th:value="${sortDir}" />
+
+            Filter:&nbsp;
+            <input type="search" name="keyword" th:value="${keyword}" class="form-control" required/>
+            &nbsp;&nbsp;
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i>
+            </button>
+            &nbsp;&nbsp;
+            <button type="button" class="btn btn-secondary" onclick="clearFilter()">
+                <i class="fas fa-eraser"></i>
+            </button>
+        </form>
+
+        <div th:if="${messageSuccess != null}" class="alert alert-success text-center">
+            [[${messageSuccess}]]
+        </div>
+
+        <div th:if="${messageError != null}" class="alert alert-danger text-center">
+            [[${messageError}]]
+        </div>
+
+    </div>
+    <!-- SEARCH FORM END-->
+</body>
