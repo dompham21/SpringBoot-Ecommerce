@@ -34,6 +34,18 @@ public class WebsecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         http.authorizeRequests()
+                .antMatchers("/users/**", "/settings/**", "/countries/**", "/states/**").hasAuthority("Admin")
+                .antMatchers("/categories/**","/brands/**","/menus/**").hasAnyAuthority("Admin", "Editor")
+                .antMatchers("/products/new", "/products/delete/**").hasAnyAuthority("Admin", "Editor")
+                .antMatchers("/products/edit/**", "/products/save", "/products/check_unique")
+                    .hasAnyAuthority("Admin", "Editor", "Salesperson")
+                .antMatchers("/products", "/products/", "/products/detail/**", "/products/page/**")
+                    .hasAnyAuthority("Admin", "Editor", "Salesperson", "Shipper")
+                .antMatchers("/products/**").hasAnyAuthority("Admin", "Editor")
+                .antMatchers("/customers/**","/shipping/**","/articles/**", "/get_shipping_cost").hasAnyAuthority("Admin", "Salesperson")
+                .antMatchers("/orders", "/orders/", "/orders/page/**", "/orders/detail/**").hasAnyAuthority("Admin", "Salesperson", "Shipper")
+                .antMatchers("/states/list_by_country/**").hasAnyAuthority("Admin", "Salesperson")
+                .antMatchers("/orders_shipper/update/**").hasAuthority("Shipper")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
