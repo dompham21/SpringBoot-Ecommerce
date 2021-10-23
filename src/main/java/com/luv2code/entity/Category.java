@@ -35,6 +35,14 @@ public class Category {
 
     }
 
+
+
+    public Set<Category> getChildren() {
+        return children;
+    }
+
+
+
     public Category(Integer id) {
         this.id = id;
     }
@@ -46,12 +54,14 @@ public class Category {
     }
 
     public Category(String name, Category parent) {
-        this(name);
+        this.name = name;
         this.parent = parent;
     }
-
+    public Category(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
     public Category(Integer id, String name, String alias) {
-        super();
         this.id = id;
         this.name = name;
         this.alias = alias;
@@ -97,6 +107,22 @@ public class Category {
 
     public void setEnabled(boolean enable) {
         this.enabled = enable;
+    }
+
+    public Category getParent() {
+        return parent;
+    }
+
+    public void setParent(Category parent) {
+        this.parent = parent;
+    }
+    public void setChildren(Set<Category> children) {
+        this.children = children;
+    }
+
+    public static Category copyIdAndName(Integer id, String name) {
+        Category copyCategory = new Category(id, name);
+        return copyCategory;
     }
 
     @Override
