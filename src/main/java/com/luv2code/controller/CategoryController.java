@@ -3,6 +3,8 @@ package com.luv2code.controller;
 import com.luv2code.entity.Category;
 import com.luv2code.entity.Role;
 import com.luv2code.entity.User;
+import com.luv2code.error.CategoryNotFoundException;
+import com.luv2code.error.UserNotFoundException;
 import com.luv2code.service.CategoryService;
 import com.luv2code.util.FileUploadUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +71,7 @@ public class CategoryController {
     public String newCategory(Model model) {
         Category category = new Category();
         List<Category> listCategories =  service.listCategoriesUsedInForm();
-        System.out.println(listCategories);
+
         model.addAttribute("pageTitle", "Create New Category");
         model.addAttribute("category", category);
         model.addAttribute("listCategories", listCategories);
@@ -101,4 +103,57 @@ public class CategoryController {
         return "redirect:/categories";
     }
 
+
+    @GetMapping("/categories/edit/{id}")
+    public String editCategory (@PathVariable(name = "id") Integer id,
+                           Model model,
+                           RedirectAttributes redirectAttributes) {
+        try {
+            Category category = service.findCategoryById(id);
+            List<Category> listCategories =  service.listCategoriesUsedInForm();
+
+            model.addAttribute("category", category);
+            model.addAttribute("pageTitle", "Edit Category ID("+ id +")");
+            model.addAttribute("listCategories", listCategories);
+
+
+            return "category_form";
+        }
+        catch (CategoryNotFoundException ex) {
+            redirectAttributes.addFlashAttribute("message",ex.getMessage());
+            return "redirect:/categories";
+
+        }
+
+    }
+
+    @GetMapping("/categories/delete/{id}")
+    public String deleteCategory(@PathVariable(name = "id") Integer id,
+                             RedirectAttributes redirectAttributes) {
+
+        try {
+            service.deleteCategoryById(id);
+            redirectAttributes.addFlashAttribute("message",
+                    "The category ID " + id + " has been deleted successfully");
+        }
+        catch (CategoryNotFoundException ex) {
+            redirectAttributes.addFlashAttribute("message",ex.getMessage());
+
+        }
+        return "redirect:/categories";
+
+    }
+
+    @GetMapping("/categories/enabled/{id}/{status}")
+    public String updateCategoriesEnableStatus(@PathVariable(name = "id") Integer id,
+                                         @PathVariable(name = "status") boolean enabled,
+                                         RedirectAttributes redirectAttributes) {
+
+        service.updateCategoryEnabledStatus(id, enabled);
+        redirectAttributes.addFlashAttribute("message",
+                "The category ID " + id + " has been updated enabled status successfully");
+
+        return "redirect:/categories";
+
+    }
 }

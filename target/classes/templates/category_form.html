@@ -75,10 +75,19 @@
 
 </div>
 <script type="text/javascript">
+    $(document).ready(function() {
+        $("#buttonCancel").on("click", function() {
+            window.location = "/users"
+        });
 
+        $("#fileImage").change(function() {
+            showImageThumbnail(this);
+        })
 
-
+    })
 
 </script>
+<script th:src="@{/js/common_list.js}"></script>
+
 </body>
 </html>
