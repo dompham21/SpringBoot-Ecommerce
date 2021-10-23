@@ -62,19 +62,13 @@
             e.preventDefault();
 
             link = $(this);
-            categoryId = link.attr("id")
+            categoryId = link.attr("categoryId")
             $("#yesButton").attr("href", link.attr("href"));
 
             showModalConfirm("Delete Confirmation", "Are you sure you want to delete this category ID " + categoryId)
         })
     })
-
-    function showModalConfirm(title, message) {
-        $("#confirmTitle").text(title);
-        $("#confirmText").text(message);
-        $("#confirmModal").modal();
-    }
-
 </script>
+<script th:src="@{/js/common_list.js}"></script>
 </body>
 </html>

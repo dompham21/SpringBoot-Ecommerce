@@ -1,6 +1,7 @@
 package com.luv2code.service;
 
 import com.luv2code.entity.Category;
+import com.luv2code.error.CategoryNotFoundException;
 import com.luv2code.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -65,8 +66,29 @@ public class CategoryService {
         return categoryRepo.save(category);
     }
 
+    public Category findCategoryById(Integer id)  throws  CategoryNotFoundException{
+        try {
+            return categoryRepo.findById(id).get();
+        }
+        catch (NoSuchElementException ex) {
+            throw new CategoryNotFoundException("Could not find any category with ID " + id);
+        }
 
+    }
 
+    public void deleteCategoryById(Integer id) throws CategoryNotFoundException {
+        Long countById = categoryRepo.countById(id);
+
+        if (countById == null || countById == 0) {
+            throw new CategoryNotFoundException("Could not find any category with ID " + id);
+        }
+        categoryRepo.deleteById(id);
+    }
+
+    public void updateCategoryEnabledStatus(Integer id, boolean enabled) {
+
+        categoryRepo.updateEnableStatus(id, enabled);
+    }
 //    private SortedSet<Category> sortSubCategories(Set<Category> children) {
 //        return sortSubCategories(children, "asc");
 //    }
