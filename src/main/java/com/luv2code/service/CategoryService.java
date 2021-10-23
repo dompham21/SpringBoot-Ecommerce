@@ -1,7 +1,6 @@
 package com.luv2code.service;
 
 import com.luv2code.entity.Category;
-import com.luv2code.entity.User;
 import com.luv2code.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
 
 @Service
 public class CategoryService {
@@ -27,4 +28,64 @@ public class CategoryService {
 
         return categoryRepo.findAll(pageable);
     }
+
+    public List<Category> listCategoriesUsedInForm() {
+        List<Category> categoriesUsedInForm = new ArrayList<>();
+        Iterable<Category> categoriesInDB = categoryRepo.findAll();
+        for(Category category : categoriesInDB) {
+
+            if(category.getParent() == null) {
+                categoriesUsedInForm.add(Category.copyIdAndName(category.getId(),category.getName()));
+
+                Set<Category> children = category.getChildren();
+                for(Category subCategory : children) {
+                    categoriesUsedInForm.add(Category.copyIdAndName(subCategory.getId(), "--" + subCategory.getName()));
+                    listChildren(categoriesUsedInForm, subCategory, 1);
+                }
+            }
+        }
+        return  categoriesUsedInForm;
+    }
+
+    private void listChildren(List<Category> categoriesUsedInForm, Category parent, int subLevel ) {
+        int newSubLevel = subLevel  + 1;
+        Set<Category> children = parent.getChildren();
+
+        for(Category subCategory : children) {
+            String name = "";
+            for(int i=0;i<newSubLevel;i++) {
+                name += "--";
+            }
+            categoriesUsedInForm.add(Category.copyIdAndName(subCategory.getId(),name + subCategory.getName()));
+            listChildren(categoriesUsedInForm, subCategory, newSubLevel);
+        }
+    }
+
+    public Category save(Category category) {
+        return categoryRepo.save(category);
+    }
+
+
+
+//    private SortedSet<Category> sortSubCategories(Set<Category> children) {
+//        return sortSubCategories(children, "asc");
+//    }
+//
+//    private SortedSet<Category> sortSubCategories(Set<Category> children, String sortDir) {
+//        SortedSet<Category> sortedChildren = new TreeSet<>(new Comparator<Category>() {
+//            @Override
+//            public int compare(Category cat1, Category cat2) {
+//                if (sortDir.equals("asc")) {
+//                    return cat1.getName().compareTo(cat2.getName());
+//                } else {
+//                    return cat2.getName().compareTo(cat1.getName());
+//                }
+//            }
+//        });
+//
+//        sortedChildren.addAll(children);
+//
+//        return sortedChildren;
+//    }
+//
 }
